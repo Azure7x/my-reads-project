@@ -108,6 +108,9 @@ class BookList extends Component {
 
           </div>
         </div>
+        <div className="open-search">
+          <a onClick={() => this.props.onShowSearch()}>Add a book</a>
+        </div>
       </div>
 
   )
