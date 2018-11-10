@@ -23,12 +23,30 @@ class BooksApp extends React.Component {
     })
   }
 
+  updateBookShelf = (event, book) => {
+
+    let newShelf = event.target.options[event.target.selectedIndex].value;
+    
+    // console.log(newShelf);
+      this.setState((state) => ({
+        books: state.books.map((b) => {
+          if(b.title === book.title) {
+            b.shelf=newShelf;
+          }
+          return b;
+        })
+      }))
+
+
+    }
+
   render() {
     return (
       <div className="app">
         <Route exact path='/' render={() => (
           <BookList
           books={this.state.books}
+          onUpdateToRead={this.updateBookShelf}
           />
         )}/>
         <Route path='/search' render={() => (
