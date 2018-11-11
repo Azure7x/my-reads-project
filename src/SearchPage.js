@@ -1,7 +1,30 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom'
+import * as BooksAPI from './BooksAPI'
+import BooksApp from './App.js'
 
 class SearchPage extends Component {
+//got some help on this page from https://github.com/sarah-maris/reactnd-project-myreads/blob/master/src/components/Search.js
+  state ={
+    books: [],
+    query: ''
+  }
+
+  loadBooks = event => {
+    const query = event.target.value;
+    this.setState({query});
+
+    if(query) {
+      BooksAPI.search(query.trim(), 20).then(newbooks => {
+        newbooks.length > 0
+        ? this.setState({books: newbooks})
+        : this.setState({books: []});
+      })
+    } else {
+      this.setState({ books: []});
+    }
+  }
+
   render() {
 
     return(
@@ -17,13 +40,39 @@ class SearchPage extends Component {
               However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
               you don't find a specific author or title. Every search is limited by search terms.
             */}
-            <input type="text" placeholder="Search by title or author"/>
-
+            <input
+            value={this.state.query}
+            onChange={this.loadBooks}
+            type="text"
+            placeholder="Search by title or author"
+            />
+            <div>{JSON.stringify(this.state.query)}</div>
           </div>
         </div>
-        <div className="search-books-results">
-          <ol className="books-grid"></ol>
-        </div>
+        {this.state.books.length > 0 && (<div className="search-books-results">
+          <ol className="books-grid">
+            {this.state.books.map((book) => (
+              <li key={book.id}>
+                <div className="book">
+                  <div className="book-top">
+                    <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
+                      <div className="book-shelf-changer">
+                        <select onChange={(event) => this.props.onUpdateToRead(event,book)}>
+                          <option value="move" disabled>Move to...</option>
+                          <option value="currentlyReading">Currently Reading</option>
+                          <option value="wantToRead">Want to Read</option>
+                          <option value="read">Read</option>
+                          <option value="none">None</option>
+                        </select>
+                      </div>
+                    </div>
+                  <div className="book-title">{book.title}</div>
+                  <div className="book-authors">{book.authors}</div>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>)}
       </div>
     )
   }

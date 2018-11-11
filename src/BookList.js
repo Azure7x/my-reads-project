@@ -32,12 +32,13 @@ class BookList extends Component {
                   {/*the second index of the current array determines the books on the shelf*/}
                   return book.shelf === shelf[1];
                 }).map((book) => (
-                  <li key={book.industryIdentifiers[0].identifier}>
+                  <li key={book.id}>
                     <div className="book">
                       <div className="book-top">
                         <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
                           <div className="book-shelf-changer">
-                            <select value={book.shelf} onChange={(event) => this.props.onUpdateToRead(event,book)}>
+                          {/*got help with select and shelf section from https://stackoverflow.com/questions/3487263/how-to-use-onclick-or-onselect-on-option-tag-in-a-jsp-page */}
+                            <select value={book.shelf} onChange={(event) => this.props.onUpdateToRead(event,book,this.props.books)}>
                               <option value="move" disabled>Move to...</option>
                               <option value="currentlyReading">Currently Reading</option>
                               <option value="wantToRead">Want to Read</option>

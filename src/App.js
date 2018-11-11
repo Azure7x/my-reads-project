@@ -26,19 +26,19 @@ class BooksApp extends React.Component {
   updateBookShelf = (event, book) => {
 
     let newShelf = event.target.options[event.target.selectedIndex].value;
-    
-    // console.log(newShelf);
-      this.setState((state) => ({
-        books: state.books.map((b) => {
-          if(b.title === book.title) {
-            b.shelf=newShelf;
-          }
-          return b;
-        })
-      }))
+    //got some help on this function from https://github.com/sarah-maris/reactnd-project-myreads/blob/master/src/components/Search.js
 
+      book.shelf = newShelf;
+      this.setState((state) => ({
+        books: state.books
+        .filter(b => b.id !== book.id)
+        .concat(book)
+
+      }))
+      BooksAPI.update(book,newShelf);
 
     }
+
 
   render() {
     return (
@@ -51,6 +51,7 @@ class BooksApp extends React.Component {
         )}/>
         <Route path='/search' render={() => (
           <SearchPage
+          onUpdateToRead={this.updateBookShelf}
           />
         )}/>
       </div>
