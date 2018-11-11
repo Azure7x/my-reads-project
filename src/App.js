@@ -19,7 +19,6 @@ class BooksApp extends React.Component {
   componentDidMount() {
     BooksAPI.getAll().then((books) => {
       this.setState({books})
-      console.log(books);
     })
   }
 
@@ -52,6 +51,7 @@ class BooksApp extends React.Component {
         <Route path='/search' render={() => (
           <SearchPage
           onUpdateToRead={this.updateBookShelf}
+          books={this.state.books}
           />
         )}/>
       </div>

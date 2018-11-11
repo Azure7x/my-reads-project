@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom'
 import * as BooksAPI from './BooksAPI'
-import BooksApp from './App.js'
 
 class SearchPage extends Component {
 //got some help on this page from https://github.com/sarah-maris/reactnd-project-myreads/blob/master/src/components/Search.js
@@ -17,12 +16,29 @@ class SearchPage extends Component {
     if(query) {
       BooksAPI.search(query.trim(), 20).then(newbooks => {
         newbooks.length > 0
-        ? this.setState({books: newbooks})
+        ? this.setState({
+          books: newbooks.map((newBook) => {
+            //this set the default shelf for the searched books to none
+            newBook.shelf = 'none';
+            this.props.books.map((b) => {
+              //this changes the shelf for the searched book to match the saved book if there is one
+              if(newBook.id === b.id){
+                newBook.shelf = b.shelf;
+              }
+              return b;
+            })
+            return newBook;
+          })
+        })
         : this.setState({books: []});
       })
     } else {
       this.setState({ books: []});
     }
+  }
+
+  markBooks = () => {
+
   }
 
   render() {
@@ -49,15 +65,16 @@ class SearchPage extends Component {
             <div>{JSON.stringify(this.state.query)}</div>
           </div>
         </div>
-        {this.state.books.length > 0 && (<div className="search-books-results">
+        {this.state.books.length  && (
+          <div className="search-books-results">
           <ol className="books-grid">
             {this.state.books.map((book) => (
               <li key={book.id}>
                 <div className="book">
                   <div className="book-top">
-                    <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
+                    <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.smallThumbnail})` }}></div>
                       <div className="book-shelf-changer">
-                        <select onChange={(event) => this.props.onUpdateToRead(event,book)}>
+                        <select value={book.shelf} onChange={(event) => this.props.onUpdateToRead(event,book)}>
                           <option value="move" disabled>Move to...</option>
                           <option value="currentlyReading">Currently Reading</option>
                           <option value="wantToRead">Want to Read</option>
